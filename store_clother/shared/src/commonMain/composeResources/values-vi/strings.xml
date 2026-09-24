@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Cửa Hàng Quần Áo</string>
+    <string name="btn_click_me">Bấm vào tôi!</string>
+    <string name="welcome_msg">Chào mừng bạn đến với cửa hàng!</string>
+</resources>

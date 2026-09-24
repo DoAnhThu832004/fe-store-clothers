@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">Store Clother</string>
+    <string name="btn_click_me">Click me!</string>
+    <string name="welcome_msg">Welcome to our store!</string>
+    <string name="store_name">Store Name</string>
+    <string name="user_name">User Name</string>
+    <string name="password">Password</string>
+    <string name="login_in">Log in</string>
+    <string name="register">Register</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="dont_have_account">Don't have an account? Register</string>
+    <string name="sign_up_for_free">Sign up for a free account</string>
+    <string name="already_have_account">Already have an account? Sign in</string>
+    <string name="store_code">Store Code</string>
+    <string name="contact_email">Contact Email</string>
+    <string name="contact_phone">Contact Phone</string>
+    <string name="owner_full_name">Full Name</string>
+    <string name="owner_email">Email</string>
+    <string name="owner_phone">Phone</string>
+    <string name="register_tenant">Register</string>
+    <string name="please_enter_the_store_code">Please enter the store code</string>
+    <string name="please_enter_the_store_name">Please enter the store name</string>
+    <string name="please_enter_the_full_name">Please enter the full name</string>
+    <string name="please_enter_the_email">Please enter the email</string>
+    <string name="please_enter_the_phone">Please enter the phone</string>
+    <string name="please_enter_the_email_contact">Please enter the email contact</string>
+    <string name="please_enter_the_phone_contact">Please enter the phone contact</string>
+    <string name="please_enter_the_username">Please enter the username</string>
+    <string name="please_enter_the_password">Please enter the password</string>
+    <string name="error_invalid_credentials">Incorrect username or password</string>
+    <string name="error_network_unavailable">No internet connection. Please try again.</string>
+    <string name="error_unknown">An error occurred. Please try again.</string>
+    <string name="continue1">Continue</string>
+    <string name="log_out">Log out</string>
+
+    <!-- Forgot Password Screen -->
+    <string name="forgot_pw_title">Forgot Password</string>
+    <string name="forgot_pw_subtitle">Enter your registered email and store code.\nWe will send you a reset link.</string>
+    <string name="forgot_pw_email_label">Email Address</string>
+    <string name="forgot_pw_email_hint">example@email.com</string>
+    <string name="forgot_pw_store_code_label">Store Code</string>
+    <string name="forgot_pw_store_code_hint">Your store code</string>
+    <string name="forgot_pw_submit">Send Reset Link</string>
+    <string name="forgot_pw_back_to_login">Back to Login</string>
+    <string name="forgot_pw_success_title">Email Sent Successfully!</string>
+    <string name="forgot_pw_success_message">Please check your inbox (and spam folder).\nThe reset link is valid for 15 minutes.</string>
+    <string name="forgot_pw_rate_limit_title">Too Many Requests</string>
+    <string name="forgot_pw_rate_limit_message">You have sent more than 3 requests in 15 minutes.\nPlease wait before trying again.</string>
+    <string name="forgot_pw_validation_email_blank">Please enter your email address</string>
+    <string name="forgot_pw_validation_email_invalid">Invalid email format</string>
+    <string name="forgot_pw_validation_store_code_blank">Please enter your store code</string>
+
+    <!-- Reset Password Screen -->
+    <string name="reset_pw_title">Set New Password</string>
+    <string name="reset_pw_subtitle">Your new password must meet all the criteria below.</string>
+    <string name="reset_pw_new_label">New Password</string>
+    <string name="reset_pw_confirm_label">Confirm Password</string>
+    <string name="reset_pw_submit">Confirm New Password</string>
+    <string name="reset_pw_validation_weak">Password does not meet the required criteria</string>
+    <string name="reset_pw_validation_mismatch">Passwords do not match</string>
+    <string name="reset_pw_expired_title">Link Expired</string>
+    <string name="reset_pw_expired_message">This reset link is invalid, expired (15 min), or has already been used.\nPlease request a new one.</string>
+    <string name="reset_pw_expired_request_new">Request New Reset Link</string>
+    <string name="reset_pw_back_to_forgot">Request New Link</string>
+
+    <!-- Password Checklist -->
+    <string name="reset_pw_checklist_min_length">At least 8 characters</string>
+    <string name="reset_pw_checklist_uppercase">At least 1 uppercase letter (A-Z)</string>
+    <string name="reset_pw_checklist_digit">At least 1 number (0-9)</string>
+    <string name="reset_pw_checklist_special">At least 1 special character (@#$%^&amp;+=!)</string>
+    <string name="reset_pw_checklist_no_space">No spaces</string>
+    <string name="reset_pw_checklist_match">Passwords match</string>
+</resources>

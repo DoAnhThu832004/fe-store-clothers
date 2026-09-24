@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Bắt buộc để gọi API qua Retrofit -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--android:usesCleartextTraffic="true" "Này Android, tôi biết là dùng HTTP không an toàn, nhưng tôi đang là Dev, tôi cho phép ứng dụng này gửi dữ liệu dạng Cleartext (http://). Xin đừng chặn nó!" -->
+    <application
+        android:allowBackup="true"
+        android:usesCleartextTraffic="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"
+            android:name=".MainActivity">
+
+            <!-- Intent chính — launcher -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--
+                Deep Link — Custom URI Scheme (không cần xác minh domain, hoạt động ngay)
+                URL dạng: storeclothes://reset-password?token=xxxxx
+                Test bằng: adb shell am start -a android.intent.action.VIEW
+                           -d "storeclothes://reset-password?token=abc123" org.example.project
+            -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="storeclothes" android:host="reset-password" />
+            </intent-filter>
+
+            <!--
+                App Link — HTTPS Universal Link (cần xác minh qua Digital Asset Links)
+                URL dạng: https://yourdomain.com/reset-password?token=xxxxx
+
+                ⚠️ Để App Link hoạt động, backend phải host file tại:
+                   https://yourdomain.com/.well-known/assetlinks.json
+                   với nội dung chứa package_name và sha256_cert_fingerprints của app.
+
+                android:autoVerify="true" → Android sẽ tự xác minh App Link khi cài app.
+            -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="yourdomain.com"
+                    android:pathPrefix="/reset-password" />
+            </intent-filter>
+
+        </activity>
+    </application>
+
+</manifest>
