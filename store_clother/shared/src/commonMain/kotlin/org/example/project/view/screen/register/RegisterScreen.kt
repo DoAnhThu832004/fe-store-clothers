@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.view.components.AdaptiveAuthLayout
 import org.example.project.view.components.GradientButton
 import org.example.project.view.components.TopSnackbar
 import org.example.project.view.screen.login.errorToString
@@ -72,18 +73,37 @@ fun RegisterScreen(
 ) {
     val errorMessage = registerState.errorMessage?.let { errorToString(it) }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val scrollState = rememberScrollState()
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+
+    AdaptiveAuthLayout(
+        heroTitle = "Đăng ký cửa hàng",
+        heroSubtitle = "Khởi tạo hệ thống quản lý chuỗi thời trang thông minh & chuyên nghiệp chỉ trong vài phút",
+        maxWidthDesktopCard = 520.dp,
+        topSnackbar = {
+            TopSnackbar(
+                message = errorMessage,
+                onDismiss = onErrorMessageShown
+            )
+        }
+    ) { isWideScreen ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp)
-                .statusBarsPadding()
-                .imePadding()
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
+            Text(
+                text = if (isWideScreen) "Tạo tài khoản cửa hàng" else "👗 Đăng ký mới",
+                fontSize = if (isWideScreen) 24.sp else 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Bước 1/2: Thông tin cửa hàng & tài khoản quản lý",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+
             OutlinedTextField(
                 value = registerState.storeName,
                 onValueChange = onStoreNameChanged,
@@ -102,7 +122,8 @@ fun RegisterScreen(
                     unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
             OutlinedTextField(
                 value = registerState.storeCode,
                 onValueChange = onStoreCodeChanged,
@@ -112,6 +133,13 @@ fun RegisterScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 },
+                supportingText = {
+                    Text(
+                        text = "Ví dụ: my-shop, shop123 (chữ thường, số, dấu gạch ngang)",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
@@ -121,7 +149,8 @@ fun RegisterScreen(
                     unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
             OutlinedTextField(
                 value = registerState.ownerUsername,
                 onValueChange = onUserNameChanged,
@@ -131,6 +160,13 @@ fun RegisterScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 },
+                supportingText = {
+                    Text(
+                        text = "Tối thiểu 4 ký tự (chữ thường, số, gạch dưới)",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
@@ -140,7 +176,8 @@ fun RegisterScreen(
                     unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
             OutlinedTextField(
                 value = registerState.ownerPassword,
                 onValueChange = onPasswordChanged,
@@ -150,15 +187,24 @@ fun RegisterScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 },
+                supportingText = {
+                    Text(
+                        text = "Tối thiểu 8 ký tự",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
                 singleLine = true,
                 trailingIcon = {
                     IconButton(
                         onClick = onPasswordVisibilityChanged
                     ) {
                         Image(
-                            painter = if(registerState.isPasswordVisible) painterResource(Res.drawable.ic_eye) else painterResource(
-                                Res.drawable.ic_eyeOff),
-                            contentDescription = null
+                            painter = if (registerState.isPasswordVisible)
+                                painterResource(Res.drawable.ic_eye)
+                            else
+                                painterResource(Res.drawable.ic_eyeOff),
+                            contentDescription = if (registerState.isPasswordVisible) "Ẩn" else "Hiện"
                         )
                     }
                 },
@@ -174,7 +220,8 @@ fun RegisterScreen(
                     unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
             OutlinedTextField(
                 value = registerState.ownerFullName,
                 onValueChange = onFullNameChanged,
@@ -193,12 +240,13 @@ fun RegisterScreen(
                     unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+
             GradientButton(
                 onClick = {
                     keyboardController?.hide()
                     onRegisterContactClick()
-                          },
+                },
                 gradient = Brush.horizontalGradient(
                     colors = listOf(
                         MaterialTheme.colorScheme.primaryContainer,
@@ -217,10 +265,5 @@ fun RegisterScreen(
                 }
             )
         }
-        TopSnackbar(
-            message = errorMessage,
-            onDismiss = onErrorMessageShown,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
     }
 }

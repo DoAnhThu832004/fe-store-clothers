@@ -27,9 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.example.project.view.components.AdaptiveAuthLayout
 import org.example.project.view.components.GradientButton
 import org.example.project.view.components.TopSnackbar
 import org.example.project.view.screen.login.errorToString
@@ -53,18 +56,37 @@ fun RegisterContactScreen(
 ) {
     val errorMessage = registerState.errorMessage?.let { errorToString(it) }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val scrollState = rememberScrollState()
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+
+    AdaptiveAuthLayout(
+        heroTitle = "Thông tin liên hệ",
+        heroSubtitle = "Thiết lập kênh liên lạc và xác thực bảo mật để hoàn tất kích hoạt cửa hàng của bạn",
+        maxWidthDesktopCard = 520.dp,
+        topSnackbar = {
+            TopSnackbar(
+                message = errorMessage,
+                onDismiss = onErrorMessageShown
+            )
+        }
+    ) { isWideScreen ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp)
-                .statusBarsPadding()
-                .imePadding()
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
+            Text(
+                text = if (isWideScreen) "Thông tin liên hệ cửa hàng" else "📞 Liên hệ & Xác thực",
+                fontSize = if (isWideScreen) 24.sp else 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Bước 2/2: Kênh liên lạc phục vụ khách hàng & quản trị",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+
             OutlinedTextField(
                 value = registerState.contactEmail,
                 onValueChange = onContactEmailChanged,
@@ -77,13 +99,17 @@ fun RegisterContactScreen(
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
             OutlinedTextField(
                 value = registerState.contactPhone,
                 onValueChange = onContactPhoneChanged,
@@ -93,19 +119,27 @@ fun RegisterContactScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 },
+                supportingText = {
+                    Text(
+                        text = "VD: 0912345678 (10 số, đầu 0 hoặc +84)",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next,
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Phone
                 ),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
             OutlinedTextField(
                 value = registerState.ownerEmail,
                 onValueChange = onEmailChanged,
@@ -118,13 +152,17 @@ fun RegisterContactScreen(
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
             OutlinedTextField(
                 value = registerState.ownerPhone,
                 onValueChange = onPhoneChanged,
@@ -134,19 +172,27 @@ fun RegisterContactScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 },
+                supportingText = {
+                    Text(
+                        text = "VD: 0987654321 (10 số, đầu 0 hoặc +84)",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Phone
                 ),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+
             GradientButton(
                 onClick = {
                     keyboardController?.hide()
@@ -171,16 +217,13 @@ fun RegisterContactScreen(
                         )
                     }
                     Text(
-                        text = "Đăng ký",
+                        text = if (registerState.isLoading) "Đang kích hoạt..." else "Hoàn tất đăng ký",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(vertical = 2.dp)
                     )
                 }
             )
         }
-        TopSnackbar(
-            message = errorMessage,
-            onDismiss = onErrorMessageShown,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
     }
 }

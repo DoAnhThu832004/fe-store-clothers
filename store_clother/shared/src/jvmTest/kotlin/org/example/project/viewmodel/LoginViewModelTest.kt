@@ -21,7 +21,7 @@ import io.mockk.every
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.example.project.core.common.Resource
-import org.example.project.data.remote.dto.UserInfoDto
+import org.example.project.domain.model.User
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
@@ -268,7 +268,7 @@ class LoginViewModelTest {
         viewModel.onUserNameChanged("USER")
         viewModel.onPasswordChanged("123456")
         
-        val userInfo = mockk<UserInfoDto>(relaxed = true) {
+        val userInfo = mockk<User>(relaxed = true) {
             every { roles } returns listOf("ROLE_OWNER")
         }
         coEvery { authRepository.login(any(), any(), any()) } returns Resource.Success(userInfo)
@@ -291,7 +291,7 @@ class LoginViewModelTest {
         viewModel.onUserNameChanged("USER")
         viewModel.onPasswordChanged("123456")
         
-        val userInfo = mockk<UserInfoDto>(relaxed = true) {
+        val userInfo = mockk<User>(relaxed = true) {
             every { roles } returns listOf("ROLE_CASHIER")
         }
         coEvery { authRepository.login(any(), any(), any()) } returns Resource.Success(userInfo)
@@ -308,7 +308,7 @@ class LoginViewModelTest {
         viewModel.onUserNameChanged("USER")
         viewModel.onPasswordChanged("123456")
         
-        val userInfo = mockk<UserInfoDto>(relaxed = true) {
+        val userInfo = mockk<User>(relaxed = true) {
             every { roles } returns listOf("ROLE_WAREHOUSE_STAFF")
         }
         coEvery { authRepository.login(any(), any(), any()) } returns Resource.Success(userInfo)
@@ -325,7 +325,7 @@ class LoginViewModelTest {
         viewModel.onUserNameChanged("USER")
         viewModel.onPasswordChanged("123456")
         
-        val userInfo = mockk<UserInfoDto>(relaxed = true) {
+        val userInfo = mockk<User>(relaxed = true) {
             every { roles } returns listOf("ROLE_NEW_UNKNOWN")
         }
         coEvery { authRepository.login(any(), any(), any()) } returns Resource.Success(userInfo)

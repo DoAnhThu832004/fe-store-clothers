@@ -38,6 +38,13 @@ sealed interface LoginError {
     data object EmptyEmailContact : LoginError
     data object EmptyPhoneContact : LoginError
 
+    /** Lỗi định dạng */
+    data object InvalidStoreCodeFormat : LoginError
+    data object InvalidUsernameFormat : LoginError
+    data object PasswordTooShort : LoginError
+    data object InvalidEmailFormat : LoginError
+    data object InvalidPhoneFormat : LoginError
+
     // ── Network / Server Errors ──────────────────────────────────────────────
 
     /** Sai username hoặc password */

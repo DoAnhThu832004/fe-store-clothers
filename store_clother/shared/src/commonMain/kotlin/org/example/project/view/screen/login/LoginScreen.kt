@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.view.components.AdaptiveAuthLayout
 import org.example.project.view.components.GradientButton
 import org.example.project.view.components.TopSnackbar
 import org.example.project.viewmodel.LoginError
@@ -49,7 +50,12 @@ import org.jetbrains.compose.resources.stringResource
 import store_clother.shared.generated.resources.Res
 import store_clother.shared.generated.resources.dont_have_account
 import store_clother.shared.generated.resources.error_invalid_credentials
+import store_clother.shared.generated.resources.error_invalid_email
+import store_clother.shared.generated.resources.error_invalid_phone
+import store_clother.shared.generated.resources.error_invalid_store_code
+import store_clother.shared.generated.resources.error_invalid_username
 import store_clother.shared.generated.resources.error_network_unavailable
+import store_clother.shared.generated.resources.error_password_too_short
 import store_clother.shared.generated.resources.error_unknown
 import store_clother.shared.generated.resources.forgot_password
 import store_clother.shared.generated.resources.ic_eye
@@ -81,18 +87,23 @@ import store_clother.shared.generated.resources.user_name
  */
 @Composable
 fun errorToString(error: LoginError): String = when (error) {
-    LoginError.EmptyStoreCode       -> stringResource(Res.string.please_enter_the_store_code)
-    LoginError.EmptyStoreName       -> stringResource(Res.string.please_enter_the_store_name)
-    LoginError.EmptyUsername        -> stringResource(Res.string.please_enter_the_username)
-    LoginError.EmptyPassword        -> stringResource(Res.string.please_enter_the_password)
-    LoginError.EmptyFullName        -> stringResource(Res.string.please_enter_the_full_name)
-    LoginError.EmptyEmail           -> stringResource(Res.string.please_enter_the_email)
-    LoginError.EmptyPhone           -> stringResource(Res.string.please_enter_the_phone)
-    LoginError.EmptyEmailContact    -> stringResource(Res.string.please_enter_the_email_contact)
-    LoginError.EmptyPhoneContact    -> stringResource(Res.string.please_enter_the_phone_contact)
-    LoginError.InvalidCredentials   -> stringResource(Res.string.error_invalid_credentials)
-    LoginError.NetworkUnavailable   -> stringResource(Res.string.error_network_unavailable)
-    is LoginError.Unknown           -> error.rawMessage ?: stringResource(Res.string.error_unknown)
+    LoginError.EmptyStoreCode          -> stringResource(Res.string.please_enter_the_store_code)
+    LoginError.EmptyStoreName          -> stringResource(Res.string.please_enter_the_store_name)
+    LoginError.EmptyUsername           -> stringResource(Res.string.please_enter_the_username)
+    LoginError.EmptyPassword           -> stringResource(Res.string.please_enter_the_password)
+    LoginError.EmptyFullName           -> stringResource(Res.string.please_enter_the_full_name)
+    LoginError.EmptyEmail              -> stringResource(Res.string.please_enter_the_email)
+    LoginError.EmptyPhone              -> stringResource(Res.string.please_enter_the_phone)
+    LoginError.EmptyEmailContact       -> stringResource(Res.string.please_enter_the_email_contact)
+    LoginError.EmptyPhoneContact       -> stringResource(Res.string.please_enter_the_phone_contact)
+    LoginError.InvalidStoreCodeFormat  -> stringResource(Res.string.error_invalid_store_code)
+    LoginError.InvalidUsernameFormat   -> stringResource(Res.string.error_invalid_username)
+    LoginError.PasswordTooShort        -> stringResource(Res.string.error_password_too_short)
+    LoginError.InvalidEmailFormat      -> stringResource(Res.string.error_invalid_email)
+    LoginError.InvalidPhoneFormat      -> stringResource(Res.string.error_invalid_phone)
+    LoginError.InvalidCredentials      -> stringResource(Res.string.error_invalid_credentials)
+    LoginError.NetworkUnavailable      -> stringResource(Res.string.error_network_unavailable)
+    is LoginError.Unknown              -> error.rawMessage ?: stringResource(Res.string.error_unknown)
 }
 
 /**
@@ -123,34 +134,35 @@ fun LoginScreen(
 ) {
     val errorMessage = loginState.error?.let { errorToString(it) }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val scrollState = rememberScrollState()
-
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    AdaptiveAuthLayout(
+        heroTitle = "Store Clother",
+        heroSubtitle = "Hệ thống quản lý chuỗi cửa hàng thời trang chuyên nghiệp, thông minh và tinh gọn",
+        topSnackbar = {
+            TopSnackbar(
+                message = errorMessage,
+                onDismiss = onErrorShown
+            )
+        }
+    ) { isWideScreen ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp)
-                .statusBarsPadding()
-                .imePadding()
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-
             Text(
-                text = "👗 Store Manager",
-                fontSize = 28.sp,
+                text = if (isWideScreen) "Đăng nhập hệ thống" else "👗 Store Manager",
+                fontSize = if (isWideScreen) 24.sp else 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "Đăng nhập vào hệ thống",
+                text = if (isWideScreen) "Vui lòng nhập thông tin để truy cập quản lý cửa hàng" else "Đăng nhập vào hệ thống",
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(28.dp))
             OutlinedTextField(
                 value = loginState.storeCode,
                 onValueChange = onStoreCodeChanged,
@@ -324,12 +336,5 @@ fun LoginScreen(
                 )
             }
         }
-
-        // ── TopSnackbar (hiển thị lỗi ở đầu màn hình, slide từ phải sang trái) ──
-        TopSnackbar(
-            message = errorMessage,
-            onDismiss = onErrorShown,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
     }
 }

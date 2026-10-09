@@ -30,6 +30,12 @@
     <string name="error_invalid_credentials">Incorrect username or password</string>
     <string name="error_network_unavailable">No internet connection. Please try again.</string>
     <string name="error_unknown">An error occurred. Please try again.</string>
+    <string name="error_invalid_store_code">Mã cửa hàng từ 3 đến 100 ký tự (chỉ gồm chữ thường, số, dấu gạch ngang)</string>
+    <string name="error_invalid_username">Tên đăng nhập từ 4 đến 50 ký tự (chữ thường, số, dấu gạch dưới)</string>
+    <string name="error_password_too_short">Mật khẩu phải có ít nhất 8 ký tự</string>
+    <string name="error_invalid_email">Email không đúng định dạng</string>
+    <string name="error_invalid_phone">Số điện thoại không đúng định dạng (VD: 0912345678)</string>
+    <string name="register_success_msg">Đăng ký cửa hàng thành công! Vui lòng đăng nhập.</string>
     <string name="continue1">Continue</string>
     <string name="log_out">Log out</string>
 

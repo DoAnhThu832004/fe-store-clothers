@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.domain.validator.PasswordStrength
+import org.example.project.view.components.AdaptiveAuthLayout
 import org.example.project.view.components.GradientButton
 import org.example.project.view.components.TopSnackbar
 import org.jetbrains.compose.resources.painterResource
@@ -104,43 +105,29 @@ fun ResetPasswordScreen(
         else -> null
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        // ── Token Expired Full-Screen UI ─────────────────────────────────────
-        AnimatedVisibility(
-            visible = isTokenExpired,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            TokenExpiredContent(
-                onRequestNewLink = onNavigateToForgotPassword
+    AdaptiveAuthLayout(
+        modifier = modifier,
+        heroTitle = "Bảo mật tài khoản",
+        heroSubtitle = "Thiết lập mật khẩu mới an toàn theo tiêu chuẩn bảo mật để bảo vệ thông tin kinh doanh của cửa hàng",
+        maxWidthDesktopCard = 520.dp,
+        topSnackbar = {
+            TopSnackbar(
+                message = errorMessage,
+                onDismiss = { onIntent(ResetPasswordIntent.ErrorDismissed) }
             )
         }
-
-        // ── Normal Form UI ───────────────────────────────────────────────────
-        AnimatedVisibility(
-            visible = !isTokenExpired,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
+    ) { isWideScreen ->
+        if (isTokenExpired) {
+            TokenExpiredContent(onRequestNewLink = onNavigateToForgotPassword)
+        } else {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp)
-                    .statusBarsPadding()
-                    .imePadding()
-                    .verticalScroll(scrollState),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(32.dp))
-
                 // Header
                 Text(
                     text = "🔑 ${stringResource(Res.string.reset_pw_title)}",
-                    fontSize = 26.sp,
+                    fontSize = if (isWideScreen) 24.sp else 26.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center
@@ -153,7 +140,7 @@ fun ResetPasswordScreen(
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // ── New Password Field ────────────────────────────────────────
                 OutlinedTextField(
@@ -236,7 +223,7 @@ fun ResetPasswordScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // ── Submit Button ─────────────────────────────────────────────
+                // ── Submit Button ─────────────────────────────────────
                 GradientButton(
                     onClick = { onIntent(ResetPasswordIntent.SubmitClicked) },
                     gradient = Brush.horizontalGradient(
@@ -269,13 +256,6 @@ fun ResetPasswordScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
-
-        // ── TopSnackbar ──────────────────────────────────────────────────────
-        TopSnackbar(
-            message = errorMessage,
-            onDismiss = { onIntent(ResetPasswordIntent.ErrorDismissed) },
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
     }
 }
 

@@ -39,11 +39,41 @@ object AuthValidator {
     // Regex email cơ bản — kiểm tra format hợp lệ
     private val EMAIL_REGEX = Regex("""^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}${'$'}""")
 
+    private val STORE_CODE_REGEX = Regex("""^[a-z0-9]+(-[a-z0-9]+)*$""")
+    private val USERNAME_REGEX = Regex("""^[a-z0-9_]+$""")
+    private val PHONE_REGEX = Regex("""^(\+84|0)[0-9]{9}$""")
+
     /**
      * Kiểm tra format email hợp lệ.
      * @return true nếu email đúng format
      */
     fun isValidEmail(email: String): Boolean = EMAIL_REGEX.matches(email.trim())
+
+    /**
+     * Kiểm tra mã cửa hàng hợp lệ (3-100 ký tự, chữ thường, số, dấu gạch ngang).
+     */
+    fun isValidStoreCode(storeCode: String): Boolean {
+        val trimmed = storeCode.trim()
+        return trimmed.length in 3..100 && STORE_CODE_REGEX.matches(trimmed)
+    }
+
+    /**
+     * Kiểm tra username hợp lệ (4-50 ký tự, chữ thường, số, gạch dưới).
+     */
+    fun isValidUsername(username: String): Boolean {
+        val trimmed = username.trim()
+        return trimmed.length in 4..50 && USERNAME_REGEX.matches(trimmed)
+    }
+
+    /**
+     * Kiểm tra số điện thoại (đầu 0 hoặc +84, tổng 10 số).
+     */
+    fun isValidPhone(phone: String): Boolean = PHONE_REGEX.matches(phone.trim())
+
+    /**
+     * Kiểm tra độ dài mật khẩu tối thiểu 8 ký tự.
+     */
+    fun isValidPasswordLength(password: String): Boolean = password.length >= 8
 
     /**
      * Kiểm tra mật khẩu khớp với Regex của backend.

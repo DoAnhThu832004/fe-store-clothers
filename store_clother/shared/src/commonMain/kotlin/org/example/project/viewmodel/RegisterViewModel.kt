@@ -13,8 +13,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.core.common.Resource
-import org.example.project.data.remote.dto.RegisterRequestDto
+import org.example.project.domain.model.RegisterTenantParams
+import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.repository.IAuthRepository
+import org.example.project.domain.usecase.RegisterTenantUseCase
+import org.example.project.domain.validator.AuthValidator
 import kotlin.reflect.KClass
 
 sealed class RegisterNavigationEvent {
@@ -43,8 +46,14 @@ sealed class RegisterResult {
     data class Error(val message: LoginError) : RegisterResult()
 }
 class RegisterViewModel(
-    private val authRepository: IAuthRepository
+    private val registerTenantUseCase: RegisterTenantUseCase,
+    private val authRepository: AuthRepository? = null
 ): ViewModel() {
+
+    constructor(authRepository: AuthRepository) : this(
+        registerTenantUseCase = RegisterTenantUseCase(authRepository),
+        authRepository = authRepository
+    )
     private val _registerState = MutableStateFlow(RegisterState())
     val registerState: StateFlow<RegisterState> = _registerState.asStateFlow()
     private val _navigationEvent = MutableSharedFlow<RegisterNavigationEvent>(extraBufferCapacity = 1)
@@ -55,7 +64,7 @@ class RegisterViewModel(
         _registerState.update { it.copy(storeName = storeName) }
     }
     fun onStoreCodeChanged(storeCode: String) {
-        _registerState.update { it.copy(storeCode = storeCode) }
+        _registerState.update { it.copy(storeCode = storeCode.lowercase()) }
     }
     fun onContactEmailChanged(contactEmail: String) {
         _registerState.update { it.copy(contactEmail = contactEmail) }
@@ -89,8 +98,11 @@ class RegisterViewModel(
         val error = when {
             state.storeName.isBlank()     -> LoginError.EmptyStoreName
             state.storeCode.isBlank()     -> LoginError.EmptyStoreCode
+            !AuthValidator.isValidStoreCode(state.storeCode) -> LoginError.InvalidStoreCodeFormat
             state.ownerUsername.isBlank() -> LoginError.EmptyUsername
+            !AuthValidator.isValidUsername(state.ownerUsername) -> LoginError.InvalidUsernameFormat
             state.ownerPassword.isBlank() -> LoginError.EmptyPassword
+            !AuthValidator.isValidPasswordLength(state.ownerPassword) -> LoginError.PasswordTooShort
             state.ownerFullName.isBlank() -> LoginError.EmptyFullName
             else                          -> null
         }
@@ -105,16 +117,20 @@ class RegisterViewModel(
         if (state.isLoading) return
         val step2Error = when {
             state.contactEmail.isBlank() -> LoginError.EmptyEmailContact
+            !AuthValidator.isValidEmail(state.contactEmail) -> LoginError.InvalidEmailFormat
             state.contactPhone.isBlank() -> LoginError.EmptyPhoneContact
+            !AuthValidator.isValidPhone(state.contactPhone) -> LoginError.InvalidPhoneFormat
             state.ownerEmail.isBlank()   -> LoginError.EmptyEmail
+            !AuthValidator.isValidEmail(state.ownerEmail) -> LoginError.InvalidEmailFormat
             state.ownerPhone.isBlank()   -> LoginError.EmptyPhone
+            !AuthValidator.isValidPhone(state.ownerPhone) -> LoginError.InvalidPhoneFormat
             else                         -> null
         }
         if (step2Error != null) {
             _registerState.update { it.copy(errorMessage = step2Error) }
             return
         }
-        val requestDto = RegisterRequestDto(
+        val params = RegisterTenantParams(
             storeName = state.storeName.trim(),
             storeCode = state.storeCode.trim(),
             contactEmail = state.contactEmail.trim(),
@@ -130,7 +146,7 @@ class RegisterViewModel(
             _registerState.update {
                 it.copy(isLoading = true, errorMessage = null, registerResult = RegisterResult.Loading)
             }
-            when (val result = authRepository.registerTenant(requestDto)) {
+            when (val result = registerTenantUseCase(params)) {
                 is Resource.Success -> {
                     // Cập nhật state thành công
                     _registerState.update {
@@ -142,7 +158,6 @@ class RegisterViewModel(
                 }
                 is Resource.Error -> {
                     // Lỗi (Ví dụ trùng mã cửa hàng, sai định dạng...)
-                    // Chú ý: Ở đây bạn đang dùng result.throwable (theo code Login của bạn) thay vì result.exception
                     val message = mapThrowableTRegisterError(result.throwable)
                     _registerState.update {
                         it.copy(
@@ -172,11 +187,20 @@ class RegisterViewModel(
             else -> LoginError.Unknown(throwable.message)
         }
     }
-    class Factory(private val authRepository: IAuthRepository) : ViewModelProvider.Factory {
+    class Factory(
+        private val registerTenantUseCase: RegisterTenantUseCase,
+        private val authRepository: AuthRepository? = null
+    ) : ViewModelProvider.Factory {
+
+        constructor(authRepository: AuthRepository) : this(
+            registerTenantUseCase = RegisterTenantUseCase(authRepository),
+            authRepository = authRepository
+        )
+
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T {
             if (modelClass == RegisterViewModel::class) {
-                return RegisterViewModel(authRepository) as T
+                return RegisterViewModel(registerTenantUseCase, authRepository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.simpleName}")
         }

@@ -1,20 +1,22 @@
 package org.example.project
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import org.example.project.core.di.AppContainer
+import org.example.project.core.di.AppContainerHelper
+import org.example.project.navigation.AppNavGraph
+import org.example.project.ui.theme.AppTheme
 
 /**
- * App() hiện chỉ dùng cho preview trên các platform khác (Desktop, iOS, Web).
- * Trên Android, entry point thực sự là MainActivity → AppNavGraph.
- *
- * Nếu cần preview nhanh một màn hình cụ thể, thay đổi nội dung bên trong
- * MaterialTheme { ... } tại đây.
+ * Entry point dùng chung cho toàn bộ các platform KMP (Android, iOS, Desktop, Web).
+ * Khởi chạy [AppTheme] và [AppNavGraph] với Clean Architecture [AppContainer].
  */
 @Composable
 @Preview
-fun App() {
-    org.example.project.ui.theme.AppTheme {
-        // Preview placeholder — trên Android thực tế dùng AppNavGraph trong MainActivity
+fun App(
+    container: AppContainer = AppContainerHelper.current
+) {
+    AppTheme {
+        AppNavGraph(container = container)
     }
 }

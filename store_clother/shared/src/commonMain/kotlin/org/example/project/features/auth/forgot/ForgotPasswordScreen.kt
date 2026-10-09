@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import org.example.project.view.components.AdaptiveAuthLayout
 import org.example.project.view.components.GradientButton
 import org.example.project.view.components.TopSnackbar
 import org.jetbrains.compose.resources.stringResource
@@ -91,22 +92,22 @@ fun ForgotPasswordScreen(
     val isSuccess = uiState.screenState == ForgotPasswordUiState.ScreenState.Success
     val isRateLimited = uiState.screenState == ForgotPasswordUiState.ScreenState.RateLimitError
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+    AdaptiveAuthLayout(
+        modifier = modifier,
+        heroTitle = "Khôi phục tài khoản",
+        heroSubtitle = "Nhận liên kết đặt lại mật khẩu an toàn và nhanh chóng cho tài khoản quản trị của bạn",
+        maxWidthDesktopCard = 500.dp,
+        topSnackbar = {
+            TopSnackbar(
+                message = errorMessage,
+                onDismiss = { onIntent(ForgotPasswordIntent.ErrorDismissed) }
+            )
+        }
+    ) { isWideScreen ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp)
-                .statusBarsPadding()
-                .imePadding()
-                .verticalScroll(scrollState),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
-
             // ── Back button ──────────────────────────────────────────────────
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -121,12 +122,12 @@ fun ForgotPasswordScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // ── Header ───────────────────────────────────────────────────────
             Text(
                 text = "🔐 ${stringResource(Res.string.forgot_pw_title)}",
-                fontSize = 26.sp,
+                fontSize = if (isWideScreen) 24.sp else 26.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center
@@ -140,7 +141,7 @@ fun ForgotPasswordScreen(
                 lineHeight = 20.sp
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // ── Rate Limit Banner (429) ──────────────────────────────────────
             AnimatedVisibility(
@@ -296,13 +297,6 @@ fun ForgotPasswordScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
         }
-
-        // ── TopSnackbar cho Network/Validation errors ────────────────────────
-        TopSnackbar(
-            message = errorMessage,
-            onDismiss = { onIntent(ForgotPasswordIntent.ErrorDismissed) },
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
     }
 }
 

@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.core.common.Resource
+import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.repository.IAuthRepository
+import org.example.project.domain.usecase.LoginUseCase
 
 // ─── One-time Navigation Event ───────────────────────────────────────────────
 
@@ -100,8 +102,14 @@ sealed class LoginResult {
  * @param authRepository Interface repository — inject từ Factory, mock trong test
  */
 class LoginViewModel(
-    private val authRepository: IAuthRepository
+    private val loginUseCase: LoginUseCase,
+    private val authRepository: AuthRepository? = null
 ) : ViewModel() {
+
+    constructor(authRepository: AuthRepository) : this(
+        loginUseCase = LoginUseCase(authRepository),
+        authRepository = authRepository
+    )
 
     private val _loginUiState = MutableStateFlow(LoginUiState())
     val loginUiState: StateFlow<LoginUiState> = _loginUiState.asStateFlow()
@@ -175,7 +183,7 @@ class LoginViewModel(
                 it.copy(isLoading = true, error = null)
             }
 
-            when (val result = authRepository.login(
+            when (val result = loginUseCase(
                 storeCode = state.storeCode,
                 username  = state.userName.trim(),
                 password  = state.password
@@ -254,11 +262,20 @@ class LoginViewModel(
      * ViewModelProvider.Factory để inject [IAuthRepository] vào ViewModel.
      * Cần thiết vì ViewModel không nên tự khởi tạo dependency.
      */
-    class Factory(private val authRepository: IAuthRepository) : ViewModelProvider.Factory {
+    class Factory(
+        private val loginUseCase: LoginUseCase,
+        private val authRepository: AuthRepository? = null
+    ) : ViewModelProvider.Factory {
+
+        constructor(authRepository: AuthRepository) : this(
+            loginUseCase = LoginUseCase(authRepository),
+            authRepository = authRepository
+        )
+
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T {
             if (modelClass == LoginViewModel::class) {
-                return LoginViewModel(authRepository) as T
+                return LoginViewModel(loginUseCase, authRepository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.simpleName}")
         }
